@@ -1,0 +1,26 @@
+body {
+    background-color: bisque;
+}
+
+#main-container {
+    border-style: solid;
+    border-width: 1px;
+}
+
+#task-container {
+    border-style: solid;
+    border: white;
+    border-width: 1px;
+}
+
+.task-card {
+    border-style: solid;
+    border-width: 1px;
+    padding: 20px
+}
+
+#task-details {
+    border-style: solid;
+    border-width: 1px;
+    padding: 20px
+}
