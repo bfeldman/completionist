@@ -8,11 +8,15 @@
     <title>completionist</title>
 </head>
 <body>
+    <h1>completionist</h1>
+        <form id="login">
+            <input type="text" name="username" placeholder="username" />
+        </form>
+    
     <main>
-        <h1>completionist</h1>
         <div id="nav">
             <ul id="nav-list">
-                <li>new task</li>
+                <li id="new-task-button">new task</li>
                 <li>sort</li>
                 <li>filter</li>
                 <li>logout</li>
@@ -93,21 +97,6 @@
                     <li>subtask 3</li>
                 </ul>
             </div>
-            
-            <form id="new-task-form">
-                <h4>Add Task</h4>
-                <input type="text" name="title" placeholder="task"/><br>
-                <label>Due date:</label><input type="datetime-local" name="due-date"><br>
-                <label>Priority:</label><select name="priority">
-                      <option value="2">High</option>
-                      <option value="1">Normal</option>
-                      <option value="0">Low</option>
-                </select><br>
-                <label>Tag:</label><input type="text" name="tag" placeholder="tag"/><br>
-                <label>Description:</label><input type="text" name="description" placeholder="description"/><br>
-                
-                <input type="submit" value="Add Task" />
-            </form>
             
         </div>
     </main>

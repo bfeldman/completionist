@@ -10,6 +10,7 @@ body {
 }
 
 main {
+    visibility: hidden;
     padding: .30rem 3rem;
     max-width: 900px;
     margin: 0 auto;
@@ -19,6 +20,7 @@ h1 {
     border-bottom: 4px solid black;
     margin-bottom: 0;
     padding-bottom: .3rem;
+    padding-left: 20px;
 }
 
 ul#nav-list {
@@ -111,3 +113,11 @@ ul#nav-list li:hover {
     background-color: rgb(140, 176, 176);
 }
 
+#login {
+    display: flex;
+    margin: 20px 30px 20px 30px;
+    padding: 20px 30px 20px 30px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: rgb(252, 239, 220);
+}
