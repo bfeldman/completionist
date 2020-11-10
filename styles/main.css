@@ -124,9 +124,9 @@ ul#nav-list li:hover {
     background-color: rgb(252, 239, 220);
 }
 
-#new-task-form * {
+/* #new-task-form * {
     margin: 10px;
-}
+} */
 
 #close-form {
     

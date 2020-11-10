@@ -1,10 +1,5 @@
 const baseUrl = "http://localhost:3000/api/v1"
 
-// test fetch
-// fetch(`${baseUrl}/users/12`)
-// .then(response => response.json())
-// .then(data => console.log(data))
-
 /* HTML ELEMENTS */
 // login form
 const loginForm = document.querySelector("#login")
@@ -32,7 +27,6 @@ loginForm.addEventListener("submit", (e) => {
             mainElement.style.visibility = "visible"
             mainContainer.dataset.id = user.id
             loginForm.remove()
-            console.log(user)
             renderTasks(user.id)
         }   
     })    
@@ -97,7 +91,9 @@ newTaskButton.addEventListener("click", () => {
             submitNewTaskButton.setAttribute("type", "submit")
             submitNewTaskButton.setAttribute("value", "Add New Task")
 
-            
+        taskDetailsDiv.innerHTML = ''
+        taskDetailsDiv.style.display = 'block'
+
         taskForm.append(
             closeFormButton,
             taskFormHeader,
@@ -117,12 +113,10 @@ newTaskButton.addEventListener("click", () => {
             document.createElement("br"),
             submitNewTaskButton
         )
-        
-        mainContainer.append(taskForm)
+        taskDetailsDiv.append(taskForm)
         
         //new task form submit
-        const newTaskForm = document.querySelector("#new-task-form")
-        newTaskForm.addEventListener("submit", (event) => {
+        taskForm.addEventListener("submit", (event) => {
             event.preventDefault()
             // get HTML form inputs
             const newTaskTitle = newTaskForm.querySelector("input[name='title']").value
@@ -150,22 +144,22 @@ newTaskButton.addEventListener("click", () => {
                 body: JSON.stringify(newTask)
             })
             .then(resp => resp.json())
-            .then(data => {
-                console.log(data)
-                // newTaskForm.remove()
-                // RENDER NEW TASK SUBMISSION DETAILS
+            .then(task => {
+                newTaskForm.remove()
+                renderTask(task)
             })
         })
         
         // close new task form
-        const closeFormBtn = newTaskForm.querySelector("#close-form")
+        const closeFormBtn = taskForm.querySelector("#close-form")
         closeFormBtn.addEventListener("click", () => {
-            newTaskForm.remove()
+            taskDetailsDiv.innerHTML = ''
+            taskDetailsDiv.style.display = 'none'
         })
     }
 })
 
-//*********** billy's stuff
+// render single tasks
 function renderTask(task) {
     const taskCardLi = document.createElement('li')
 
@@ -201,6 +195,7 @@ function renderTask(task) {
     })
 }
 
+// render all tasks
 function renderTasks(userId) {
     fetch(`${baseUrl}/users/${userId}`)
     .then(response => response.json())
@@ -211,6 +206,7 @@ function renderTasks(userId) {
     })
 }
 
+// render task details
 function renderTaskDetails(task) {
 
     taskDetailsDiv.innerHTML = ''
@@ -265,6 +261,7 @@ function renderTaskDetails(task) {
     taskDetailsDiv.style.display = 'block'
 }
 
+// get single task
 function getTask(taskId) {
     fetch(`${baseUrl}/tasks/${taskId}`)
     .then(resp => resp.json())
@@ -273,13 +270,8 @@ function getTask(taskId) {
     })
 }
 
+// event handler for task detail visbility
 function toggleTaskDetailsVisibility(e) {
     e.target.parentElement.style.display = 'none'
     e.target.parentElement.innerHTML = ''
 }
-
-//************ init ************//
-// function init() {
-//     renderTasks(12)
-// } 
-
