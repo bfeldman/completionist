@@ -1,25 +1,98 @@
+* {
+ box-sizing: border-box;
+}
+
 body {
-    background-color: bisque;
+    font-family: "Gill Sans", sans-serif;
+    color: black;
+    background-color: blanchedalmond;
+    margin: 0;
+}
+
+main {
+    padding: .30rem 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+h1 {
+    border-bottom: 4px solid black;
+    margin-bottom: 0;
+    padding-bottom: .3rem;
+}
+
+ul#nav-list {
+    margin: 0;
+    padding: .3rem 0 1rem;
+}
+
+ul#nav-list > li {
+    display: inline-block;
+    font-size: 1.2rem;
+    margin-right: 2.2rem;
+    padding: .1rem .5rem;
+}
+
+ul#nav-list li:hover { 
+    background-color: rgb(140, 176, 176); 
+    color: whitesmoke;
 }
 
 #main-container {
+    display: flex;
+    padding: 20px 30px 20px 30px;
     border-style: solid;
     border-width: 1px;
+    background-color: rgb(252, 239, 220);
 }
 
-#task-container {
-    border-style: solid;
-    border: white;
-    border-width: 1px;
+#tasks-container {
+    padding: 0 1rem 0 0;
+}
+
+#tasks-container > ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 600px;
+    overflow-y: auto;
+    
+}
+
+#tasks-container > ul::-webkit-scrollbar {
+    width: .65rem;
+}
+
+#tasks-container > ul::-webkit-scrollbar-thumb {
+    background-color: rgb(213, 196, 171);
+    outline: 1px solid blanchedalmond;
+}
+
+#tasks-container > ul > li {
+    flex: 0 0 50%;
+    padding: 0 .3rem .6rem;
+    display: inline-block;
+    max-width: 50%;
 }
 
 .task-card {
     border-style: solid;
     border-width: 1px;
-    padding: 20px
+    padding: 20px;
+    text-align: center;
+    background-color: rgb(252, 246, 236);
+    height: 100%;
+}
+
+.task-card:hover {
+    background-color: rgb(140, 176, 176); 
 }
 
 #task-details {
+    flex: 0 0 40%;
+    max-width: 40%;
     border-style: solid;
     border-width: 1px;
     padding: 20px
@@ -28,5 +101,11 @@ body {
 #new-task-form {
     border-style: solid;
     border-width: 1px;
-    padding: 20px
+    padding: 20px;
+    background-color: rgb(252, 246, 236);
 }
+
+#task-details:hover {
+    background-color: rgb(140, 176, 176);
+}
+
