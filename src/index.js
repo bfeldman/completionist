@@ -77,6 +77,7 @@ const baseUrl = "http://localhost:3000/api/v1"
 const mainContainer = document.querySelector('#main-container')
 const tasksContainer = document.querySelector('#tasks-container')
 const tasksContainerUl = tasksContainer.querySelector('ul')
+const taskDetailsDiv = document.querySelector('#task-details')
 
 //************ render functions ************//
 
@@ -91,7 +92,8 @@ function renderTask(task) {
     taskTitle.textContent = task.title
 
     const taskDueDate = document.createElement('p')
-    taskDueDate.textContent = `Due: ${task.due_date.replace('T00:00:00.000Z','')}`
+    const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
+    taskDueDate.textContent = `Due: ${month}/${day}/${year}`
 
     const taskPriority = document.createElement('p')
     taskPriority.textContent = `Priority: ${task.priority_level}`
@@ -110,7 +112,6 @@ function renderTask(task) {
     tasksContainerUl.append(taskCardLi)
 
     taskCardDiv.addEventListener('click', (e) => {
-        console.log(e.target)
         getTask(e.target.dataset.id)
     })
 }
@@ -126,9 +127,12 @@ function renderTasks(userId) {
 }
 
 function renderTaskDetails(task) {
-    
-    const detailsDiv = document.createElement('div')
-    detailsDiv.id = 'task-details'
+
+    taskDetailsDiv.innerHTML = ''
+
+    const taskVisibilityButton = document.createElement('button')
+    taskVisibilityButton.addEventListener('click', toggleTaskDetailsVisibility)
+    taskVisibilityButton.textContent = 'X'
 
     const detailsTitle = document.createElement('h3')
     detailsTitle.textContent = task.title
@@ -143,12 +147,20 @@ function renderTaskDetails(task) {
     detailsTag.id = 'task-detail-tag'
 
     const detailsDueDate = document.createElement('p')
-    detailsDueDate.textContent = `Due: ${task.due_date.replace('T00:00:00.000Z','')}`
+    const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
+    detailsDueDate.textContent = `Due: ${month}/${day}/${year}`
     detailsDueDate.id = 'task-detail-due-date'
 
     const detailsPriority = document.createElement('p')
     detailsPriority.textContent = `Priority: ${task.priority_level}`
     detailsPriority.id = 'task-detail-priority'
+
+    const completionButton = document.createElement('button')
+    if (task.completion_status) {
+        completionButton.textContent = 'complete'
+    } else {
+        completionButton.textContent = 'incomplete'
+    }
 
     const detailsSubtasksUl = document.createElement('ul')
     detailsSubtasksUl.id = 'subtask-list'
@@ -160,9 +172,12 @@ function renderTaskDetails(task) {
         detailsSubtasksUl.append(subtaskLi)
     })
 
-    detailsDiv.append(detailsTitle, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl)
+    const deleteButton = document.createElement('button')
+    deleteButton.textContent = 'Delete Task'
 
-    mainContainer.append(detailsDiv)
+    taskDetailsDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl, deleteButton)
+
+    taskDetailsDiv.style.display = 'block'
 
 }
 
@@ -172,6 +187,11 @@ function getTask(taskId) {
     .then(task => {
         renderTaskDetails(task)
     })
+}
+
+function toggleTaskDetailsVisibility(e) {
+    e.target.parentElement.style.display = 'none'
+    e.target.parentElement.innerHTML = ''
 }
 
 //************ init ************//
