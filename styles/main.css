@@ -107,7 +107,7 @@ ul#nav-list li:hover {
     padding: 20px
 }
 
-#new-task-form {
+#task-form {
     /* visibility: hidden; */
     flex: 0 0 0%;
     flex-grow : 1;
