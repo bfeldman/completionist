@@ -33,11 +33,15 @@ loginForm.addEventListener("submit", (e) => {
 })
 
 
-// new task form render
+// task form render
 newTaskButton.addEventListener("click", () => {
-    if (!document.querySelector("#new-task-form")) {
+    taskFormRender({}, "POST")
+})
+
+function taskFormRender(task, action) {
+    if (!document.querySelector("#task-form")) {
         const taskForm = document.createElement("form")
-            taskForm.id = "new-task-form"
+            taskForm.id = "task-form"
 
         const closeFormButton = document.createElement("button")
             closeFormButton.id = "close-form"
@@ -45,20 +49,28 @@ newTaskButton.addEventListener("click", () => {
             closeFormButton.textContent = "❌ Close Form"
         
         const taskFormHeader = document.createElement("h4")
-            taskFormHeader.textContent = "Add Task"
+            if (task.title) {
+                taskFormHeader.textContent = "Edit Task"
+            } else {
+                taskFormHeader.textContent = "Add Task"
+            }
         
         const taskTitleInput = document.createElement("input")
             taskTitleInput.setAttribute("type", "text")
             taskTitleInput.setAttribute("name", "title")
             taskTitleInput.setAttribute("placeholder", "task title")
-            taskTitleInput.append(document.createElement("br"))
+            if (task.title) {
+                taskTitleInput.value = task.title
+            }
         
         const taskDueDateLabel = document.createElement("label")
             taskDueDateLabel.textContent = "Due date:"
         const taskDueDateSelect = document.createElement("input")
             taskDueDateSelect.setAttribute("type", "datetime-local")
             taskDueDateSelect.setAttribute("name", "due-date")
-            taskDueDateSelect.append(document.createElement("br"))
+            if (task.due_date) {
+                taskDueDateSelect.setAttribute("value", task.due_date.slice(0, -8))
+            }
         
         const taskPriorityLabel = document.createElement("label")
             taskPriorityLabel.textContent = "Priority:"
@@ -74,22 +86,35 @@ newTaskButton.addEventListener("click", () => {
                 lowPriority.setAttribute("value", "0")
                 lowPriority.textContent = "Low"
             taskPrioritySelect.append(highPriority, normalPriority, lowPriority)
-        
+            if (task.priority_level) {
+                taskPrioritySelect.value = task.priority_level
+            }
+            
         const taskTagLabel = document.createElement("label")
             taskTagLabel.textContent="Tag:"
         const taskTagInput = document.createElement("input")
             taskTagInput.setAttribute("type", "text")
             taskTagInput.setAttribute("name", "tag")
+            if (task.tag) {
+                taskTagInput.value = task.tag
+            }
             
         const taskDescriptionLabel = document.createElement("label")
             taskDescriptionLabel.textContent="Description:"
         const taskDescriptionInput = document.createElement("input")
             taskDescriptionInput.setAttribute("type", "text")
             taskDescriptionInput.setAttribute("name", "description")
+            if (task.description) {
+                taskDescriptionInput.value = task.description
+            }
             
-        const submitNewTaskButton = document.createElement("input")
-            submitNewTaskButton.setAttribute("type", "submit")
-            submitNewTaskButton.setAttribute("value", "Add New Task")
+        const submitTaskButton = document.createElement("input")
+            submitTaskButton.setAttribute("type", "submit")
+            if (action === "POST") {
+                submitTaskButton.setAttribute("value", "Add New Task")
+            } else if (action === "PATCH") {
+                submitTaskButton.setAttribute("value", "Update Task")
+            }
 
         taskDetailsDiv.innerHTML = ''
         taskDetailsDiv.style.display = 'block'
@@ -111,21 +136,21 @@ newTaskButton.addEventListener("click", () => {
             taskDescriptionLabel,
             taskDescriptionInput,
             document.createElement("br"),
-            submitNewTaskButton
+            submitTaskButton
         )
         taskDetailsDiv.append(taskForm)
         
-        //new task form submit
+        //task form submit
         taskForm.addEventListener("submit", (event) => {
             event.preventDefault()
             // get HTML form inputs
-            const newTaskTitle = newTaskForm.querySelector("input[name='title']").value
-            const newTaskDueDate = newTaskForm.querySelector("input[name='due-date']").value
-            const newTaskPriority = newTaskForm.querySelector("select[name='priority']").value
-            const newTaskTag = newTaskForm.querySelector("input[name='tag']").value
-            const newTaskDescription = newTaskForm.querySelector("input[name='description']").value
+            const newTaskTitle = taskForm.querySelector("input[name='title']").value
+            const newTaskDueDate = taskForm.querySelector("input[name='due-date']").value
+            const newTaskPriority = taskForm.querySelector("select[name='priority']").value
+            const newTaskTag = taskForm.querySelector("input[name='tag']").value
+            const newTaskDescription = taskForm.querySelector("input[name='description']").value
         
-            const newTask = {
+            let newTask = {
                 title: newTaskTitle,
                 priority_level: newTaskPriority, 
                 due_date: newTaskDueDate,
@@ -134,30 +159,22 @@ newTaskButton.addEventListener("click", () => {
                 completion_status: false,
                 user_id: mainContainer.dataset.id
             }
-                    
-            fetch(baseUrl+'/tasks', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(newTask)
-            })
-            .then(resp => resp.json())
-            .then(task => {
-                newTaskForm.remove()
-                renderTask(task)
-            })
+            
+            if (action === "POST") {
+                postNewTask(newTask)
+            } else if (action === "PATCH") {
+                editTask(newTask, task.id)
+            }
         })
         
-        // close new task form
+        // close task form
         const closeFormBtn = taskForm.querySelector("#close-form")
         closeFormBtn.addEventListener("click", () => {
             taskDetailsDiv.innerHTML = ''
             taskDetailsDiv.style.display = 'none'
         })
     }
-})
+}
 
 // render single tasks
 function renderTask(task) {
@@ -231,7 +248,7 @@ function renderTaskDetails(task) {
     const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
     detailsDueDate.textContent = `Due: ${month}/${day}/${year}`
     detailsDueDate.id = 'task-detail-due-date'
-
+    
     const detailsPriority = document.createElement('p')
     detailsPriority.textContent = `Priority: ${task.priority_level}`
     detailsPriority.id = 'task-detail-priority'
@@ -255,8 +272,14 @@ function renderTaskDetails(task) {
 
     const deleteButton = document.createElement('button')
     deleteButton.textContent = 'Delete Task'
+    
+    const editButton = document.createElement('button')
+    editButton.textContent = 'Edit Task'
+    editButton.addEventListener("click", () => {
+        taskFormRender(task, "PATCH")
+    })
 
-    taskDetailsDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl, deleteButton)
+    taskDetailsDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl, deleteButton, editButton)
 
     taskDetailsDiv.style.display = 'block'
 }
@@ -274,4 +297,47 @@ function getTask(taskId) {
 function toggleTaskDetailsVisibility(e) {
     e.target.parentElement.style.display = 'none'
     e.target.parentElement.innerHTML = ''
+}
+
+// persist new task to db
+function postNewTask(task) {
+    fetch(baseUrl+'/tasks', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(task)
+    })
+    .then(resp => resp.json())
+    .then(task => {
+        renderTask(task)
+        renderTaskDetails(task)
+    })
+}
+
+// persist edited task to db
+function editTask(task, id) {
+    fetch(`${baseUrl}/tasks/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(task)
+    })
+    .then(resp => resp.json())
+    .then(task => {
+        renderTaskDetails(task)
+        updateCard(task)
+    })
+}
+
+// update card after editing task
+function updateCard(task) {
+    const taskCard = document.querySelector(`.task-card[data-id="${task.id}"]`).childNodes
+    taskCard[0].textContent = task.title
+    const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
+    taskCard[1].textContent = `Due: ${month}/${day}/${year}`
+    taskCard[2].textContent = `Priority: ${task.priority_level}`
 }
