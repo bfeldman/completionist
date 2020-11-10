@@ -10,6 +10,7 @@
 <body>
     <main>
         <div id="main-container">
+            
             <div id="tasks-container">
                 <div class="task-card">
                     <h5 class="task-card-title">Task 1</h5>
@@ -17,6 +18,7 @@
                     <p class="task-card-priority">1</p>
                 </div>
             </div>
+           
             <div id="task-details">
                 <h3 id="task-detail-title">Task 1</h3>
                 <p id="task-detail-description">Task 1 description</p>
@@ -29,6 +31,22 @@
                     <li>subtask 3</li>
                 </ul>
             </div>
+            
+            <form id="new-task-form">
+                <h4>Add Task</h4>
+                <input type="text" name="title" placeholder="task"/><br>
+                <label>Due date:</label><input type="datetime-local" name="due-date"><br>
+                <label>Priority:</label><select name="priority">
+                      <option value="2">High</option>
+                      <option value="1">Normal</option>
+                      <option value="0">Low</option>
+                </select><br>
+                <label>Tag:</label><input type="text" name="tag" placeholder="tag"/><br>
+                <label>Description:</label><input type="text" name="description" placeholder="description"/><br>
+                
+                <input type="submit" value="Add Task" />
+            </form>
+            
         </div>
     </main>
 </body>

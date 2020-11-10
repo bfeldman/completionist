@@ -24,3 +24,9 @@ body {
     border-width: 1px;
     padding: 20px
 }
+
+#new-task-form {
+    border-style: solid;
+    border-width: 1px;
+    padding: 20px
+}
