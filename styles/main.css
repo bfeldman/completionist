@@ -121,3 +121,7 @@ ul#nav-list li:hover {
     border-width: 1px;
     background-color: rgb(252, 239, 220);
 }
+
+#new-task-form * {
+    margin: 10px;
+}
