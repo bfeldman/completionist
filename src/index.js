@@ -92,7 +92,7 @@ newTaskButton.addEventListener("click", () => {
             submitNewTaskButton.setAttribute("value", "Add New Task")
 
         taskDetailsDiv.innerHTML = ''
-        taskDetailsDiv.style.display = 'block'
+        taskDetailsDiv.style.display = 'flex'
 
         taskForm.append(
             closeFormButton,
@@ -191,7 +191,11 @@ function renderTask(task) {
     tasksContainerUl.append(taskCardLi)
 
     taskCardDiv.addEventListener('click', (e) => {
-        getTask(e.target.dataset.id)
+        if (e.target.dataset.id) {
+            getTask(e.target.dataset.id)
+        } else {
+            getTask(e.target.parentElement.dataset.id)
+        }
     })
 }
 
@@ -211,9 +215,12 @@ function renderTaskDetails(task) {
 
     taskDetailsDiv.innerHTML = ''
 
+    const taskDetailsContainerDiv = document.createElement('div')
+    taskDetailsContainerDiv.id = 'task-details-container'
+
     const taskVisibilityButton = document.createElement('button')
     taskVisibilityButton.addEventListener('click', toggleTaskDetailsVisibility)
-    taskVisibilityButton.textContent = 'X'
+    taskVisibilityButton.textContent = '❌ Close Task Details'
 
     const detailsTitle = document.createElement('h3')
     detailsTitle.textContent = task.title
@@ -246,19 +253,64 @@ function renderTaskDetails(task) {
     const detailsSubtasksUl = document.createElement('ul')
     detailsSubtasksUl.id = 'subtask-list'
 
+    const detailsSubtaskHeader = document.createElement('h4')
+    detailsSubtaskHeader.textContent = "Subtasks:"
+
+    const detailsSubtaskAddButton = document.createElement('button')
+    detailsSubtaskAddButton.id = 'subtask-add-button'
+    detailsSubtaskAddButton.textContent = "Add Subtask"
+    detailsSubtaskAddButton.addEventListener('click', showAddSubtask)
+
+    const addSubtaskForm = document.createElement("form")
+    addSubtaskForm.id = 'subtask-add-form'
+
+    const subtaskTitleInput = document.createElement("input")
+    subtaskTitleInput.setAttribute("type", "text")
+    subtaskTitleInput.setAttribute("name", "title")
+
+    addSubtaskForm.append(subtaskTitleInput)
+    addSubtaskForm.addEventListener('submit', (e) => {
+        addSubtask(task, e)
+    })
+
     task.subtasks.forEach(subtask => {
         const subtaskLi = document.createElement('li')
         subtaskLi.dataset.id = subtask.id
-        subtaskLi.textContent = subtask.title
+        const subtaskCheckbox = document.createElement('input')
+        subtaskCheckbox.dataset.id = subtask.id
+        subtaskCheckbox.type = 'checkbox'
+        if (subtask.completion_status) {
+            subtaskCheckbox.checked = true
+        }
+        subtaskCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                const newStatus = true
+                updateSubtaskCompletionStatus(newStatus, subtask)
+            } else {
+                const newStatus = false
+                updateSubtaskCompletionStatus(newStatus, subtask)
+            }
+        })
+        subtaskLi.textContent = `${subtask.title} `
+        subtaskLi.prepend(subtaskCheckbox)
+        const subtaskDeleteButton = document.createElement('button')
+        subtaskDeleteButton.dataset.id = subtask.id
+        subtaskDeleteButton.textContent = 'x'
+        subtaskDeleteButton.addEventListener('click', (e) => {
+            deleteSubtask(task, subtask, e)
+        })
+        subtaskLi.append(subtaskDeleteButton)
         detailsSubtasksUl.append(subtaskLi)
     })
 
     const deleteButton = document.createElement('button')
     deleteButton.textContent = 'Delete Task'
 
-    taskDetailsDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl, deleteButton)
+    taskDetailsContainerDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtaskHeader, detailsSubtaskAddButton, addSubtaskForm, detailsSubtasksUl, deleteButton)
 
-    taskDetailsDiv.style.display = 'block'
+    taskDetailsDiv.append(taskDetailsContainerDiv)
+
+    taskDetailsDiv.style.display = 'flex'
 }
 
 // get single task
@@ -272,6 +324,66 @@ function getTask(taskId) {
 
 // event handler for task detail visbility
 function toggleTaskDetailsVisibility(e) {
-    e.target.parentElement.style.display = 'none'
-    e.target.parentElement.innerHTML = ''
+    e.target.parentElement.parentElement.style.display = 'none'
+    e.target.parentElement.parentElement.innerHTML = ''
+}
+
+// event handler for subtask check
+function updateSubtaskCompletionStatus(newStatus, subtask) {
+    fetch(`${baseUrl}/subtasks/${subtask.id}`, {
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            title: subtask.title,
+            completion_status: newStatus,
+            task_id: subtask.task_id
+        })
+    })
+    .then(resp => resp.json())
+    .then(subtask => {
+        console.log(subtask)
+    })
+}
+
+// event handler for subtask delete
+function deleteSubtask(task, subtask, e) {
+    // e.target.parentElement.remove()
+    fetch(`${baseUrl}/subtasks/${subtask.id}`, {method: 'DELETE'})
+    .then(resp => resp.json())
+    .then(subtask => {
+        console.log("success!", subtask)
+        getTask(task.id)
+    })
+}
+
+// event handler for adding subtask
+function showAddSubtask() {
+    const addSubtaskForm = document.querySelector('#subtask-add-form')
+    addSubtaskForm.style.display = 'block'
+}
+
+function addSubtask(task, e) {
+    e.preventDefault()
+    const addSubtaskForm = document.querySelector('#subtask-add-form')
+    addSubtaskForm.style.display = 'none'
+    fetch(`${baseUrl}/subtasks`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            title: e.target.title.value,
+            completion_status: false,
+            task_id: task.id
+        })
+    })
+    .then(resp => resp.json())
+    .then(subtask => {
+        console.log(subtask)
+        getTask(task.id)
+    })
 }
