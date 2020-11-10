@@ -47,8 +47,6 @@ ul#nav-list li:hover {
 }
 
 #tasks-container {
-    flex: 0 0 60%;
-    max-width: 60%;
     padding: 0 1rem 0 0;
 }
 
