@@ -91,6 +91,7 @@ ul#nav-list li:hover {
 }
 
 #task-details {
+    background-color: rgb(252, 246, 236);
     flex: 0 0 40%;
     max-width: 40%;
     border-style: solid;
