@@ -13,7 +13,9 @@ const loginForm = document.querySelector("#login")
 const mainElement = document.querySelector("main")
 const mainContainer = document.querySelector("#main-container")
 const newTaskButton = document.querySelector("#new-task-button")
-
+const tasksContainerDiv = document.querySelector("#tasks-container")
+const tasksContainerUl = tasksContainerDiv.querySelector("ul")
+const taskDetailsDiv = document.querySelector("#task-details")
 
 /* FUNCTIONS */ 
 
@@ -30,6 +32,8 @@ loginForm.addEventListener("submit", (e) => {
             mainElement.style.visibility = "visible"
             mainContainer.dataset.id = user.id
             loginForm.remove()
+            console.log(user)
+            renderTasks(user.id)
         }   
     })    
 })
@@ -158,9 +162,124 @@ newTaskButton.addEventListener("click", () => {
         closeFormBtn.addEventListener("click", () => {
             newTaskForm.remove()
         })
-        
     }
 })
 
+//*********** billy's stuff
+function renderTask(task) {
+    const taskCardLi = document.createElement('li')
 
-// edit function
+    const taskCardDiv = document.createElement('div')
+    taskCardDiv.dataset.id = task.id
+    taskCardDiv.className = 'task-card'
+
+    const taskTitle = document.createElement('h5')
+    taskTitle.textContent = task.title
+
+    const taskDueDate = document.createElement('p')
+    const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
+    taskDueDate.textContent = `Due: ${month}/${day}/${year}`
+
+    const taskPriority = document.createElement('p')
+    taskPriority.textContent = `Priority: ${task.priority_level}`
+
+    const completionButton = document.createElement('button')
+    if (task.completion_status) {
+        completionButton.textContent = 'complete'
+    } else {
+        completionButton.textContent = 'incomplete'
+    }
+
+    taskCardDiv.append(taskTitle, taskDueDate, taskPriority, completionButton)
+
+    taskCardLi.append(taskCardDiv)
+
+    tasksContainerUl.append(taskCardLi)
+
+    taskCardDiv.addEventListener('click', (e) => {
+        getTask(e.target.dataset.id)
+    })
+}
+
+function renderTasks(userId) {
+    fetch(`${baseUrl}/users/${userId}`)
+    .then(response => response.json())
+    .then(user => {
+        user.tasks.forEach(task =>{
+            renderTask(task)
+        })
+    })
+}
+
+function renderTaskDetails(task) {
+
+    taskDetailsDiv.innerHTML = ''
+
+    const taskVisibilityButton = document.createElement('button')
+    taskVisibilityButton.addEventListener('click', toggleTaskDetailsVisibility)
+    taskVisibilityButton.textContent = 'X'
+
+    const detailsTitle = document.createElement('h3')
+    detailsTitle.textContent = task.title
+    detailsTitle.id = 'task-detail-title'
+
+    const detailsDescription = document.createElement('p')
+    detailsDescription.textContent = `Notes: ${task.description}`
+    detailsDescription.id = 'task-detail-description'
+
+    const detailsTag = document.createElement('p')
+    detailsTag.textContent = `Tag: ${task.tag}`
+    detailsTag.id = 'task-detail-tag'
+
+    const detailsDueDate = document.createElement('p')
+    const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
+    detailsDueDate.textContent = `Due: ${month}/${day}/${year}`
+    detailsDueDate.id = 'task-detail-due-date'
+
+    const detailsPriority = document.createElement('p')
+    detailsPriority.textContent = `Priority: ${task.priority_level}`
+    detailsPriority.id = 'task-detail-priority'
+
+    const completionButton = document.createElement('button')
+    if (task.completion_status) {
+        completionButton.textContent = 'complete'
+    } else {
+        completionButton.textContent = 'incomplete'
+    }
+
+    const detailsSubtasksUl = document.createElement('ul')
+    detailsSubtasksUl.id = 'subtask-list'
+
+    task.subtasks.forEach(subtask => {
+        const subtaskLi = document.createElement('li')
+        subtaskLi.dataset.id = subtask.id
+        subtaskLi.textContent = subtask.title
+        detailsSubtasksUl.append(subtaskLi)
+    })
+
+    const deleteButton = document.createElement('button')
+    deleteButton.textContent = 'Delete Task'
+
+    taskDetailsDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl, deleteButton)
+
+    taskDetailsDiv.style.display = 'block'
+}
+
+function getTask(taskId) {
+    fetch(`${baseUrl}/tasks/${taskId}`)
+    .then(resp => resp.json())
+    .then(task => {
+        renderTaskDetails(task)
+    })
+}
+
+function toggleTaskDetailsVisibility(e) {
+    e.target.parentElement.style.display = 'none'
+    e.target.parentElement.innerHTML = ''
+}
+
+//************ init ************//
+// function init() {
+//     renderTasks(12)
+// } 
+
