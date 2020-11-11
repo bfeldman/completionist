@@ -79,13 +79,13 @@ function taskFormRender(task, action) {
         const taskPrioritySelect = document.createElement("select")
             taskPrioritySelect.setAttribute("name", "priority")
             const highPriority = document.createElement("option")
-                highPriority.setAttribute("value", "2")
+                highPriority.setAttribute("value", "High")
                 highPriority.textContent = "High"
             const normalPriority = document.createElement("option")
-                normalPriority.setAttribute("value", "1")
+                normalPriority.setAttribute("value", "Normal")
                 normalPriority.textContent = "Normal"
             const lowPriority = document.createElement("option")
-                lowPriority.setAttribute("value", "0")
+                lowPriority.setAttribute("value", "Low")
                 lowPriority.textContent = "Low"
             taskPrioritySelect.append(highPriority, normalPriority, lowPriority)
             if (task.priority_level) {
@@ -236,7 +236,8 @@ function renderTaskDetails(task) {
 
     const taskDetailsContainerDiv = document.createElement('div')
     taskDetailsContainerDiv.id = 'task-details-container'
-
+    taskDetailsContainerDiv.dataset.id = task.id
+    
     const taskVisibilityButton = document.createElement('button')
     taskVisibilityButton.addEventListener('click', toggleTaskDetailsVisibility)
     taskVisibilityButton.textContent = '❌ Close Task Details'
@@ -325,6 +326,10 @@ function renderTaskDetails(task) {
 
     const deleteButton = document.createElement('button')
     deleteButton.textContent = 'Delete Task'
+    deleteButton.addEventListener("click", (e) => {
+        const deletedTaskId = e.target.parentElement.dataset.id
+        deleteTask(deletedTaskId)
+    })
     
     const editButton = document.createElement('button')
     editButton.textContent = 'Edit Task'
@@ -413,8 +418,8 @@ function addSubtask(task, e) {
     })
 }
 
+// persist new task to db
 function postNewTask(task) {
-    console.log(task)
     fetch(baseUrl+'/tasks', {
         method: "POST",
         headers: {
@@ -603,3 +608,17 @@ const logoutButton = document.querySelector("#logout")
 logoutButton.addEventListener("click", (e) => {
     location.reload();
 })
+
+function deleteTask(id) {
+    fetch(`${baseUrl}/tasks/${id}`, {
+        method: "DELETE"
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Task deleted")
+        taskDetailsDiv.innerHTML = ''
+        taskDetailsDiv.style.display = 'none'
+        tasksContainerUl.innerHTML = ''
+        renderTasks(mainContainer.dataset.id)
+    })
+}
