@@ -311,6 +311,7 @@ function renderTaskDetails(task) {
         subtaskLi.textContent = `${subtask.title} `
         subtaskLi.prepend(subtaskCheckbox)
         const subtaskDeleteButton = document.createElement('button')
+        subtaskDeleteButton.className = 'delete-indv-subtask-button'
         subtaskDeleteButton.dataset.id = subtask.id
         subtaskDeleteButton.textContent = 'x'
         subtaskDeleteButton.addEventListener('click', (e) => {
@@ -329,7 +330,7 @@ function renderTaskDetails(task) {
         taskFormRender(task, "PATCH")
     })
 
-    taskDetailsContainerDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtasksUl, deleteButton, editButton)
+    taskDetailsContainerDiv.append(taskVisibilityButton, detailsTitle, completionButton, detailsDescription, detailsTag, detailsDueDate, detailsPriority, detailsSubtaskHeader, detailsSubtaskAddButton, addSubtaskForm, detailsSubtasksUl, deleteButton, editButton)
 
     taskDetailsDiv.append(taskDetailsContainerDiv)
 
