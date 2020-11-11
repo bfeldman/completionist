@@ -71,7 +71,7 @@ function taskFormRender(task, action) {
             taskDueDateSelect.setAttribute("type", "date")
             taskDueDateSelect.setAttribute("name", "due-date")
             if (task.due_date) {
-                taskDueDateSelect.setAttribute("value", task.due_date.slice(0, -8))
+                taskDueDateSelect.setAttribute("value", task.due_date.slice(0, -14))
             }
         
         const taskPriorityLabel = document.createElement("label")
@@ -213,10 +213,12 @@ function renderTask(task) {
     tasksContainerUl.append(taskCardLi)
 
     taskCardDiv.addEventListener('click', (e) => {
-        if (e.target.dataset.id) {
-            getTask(e.target.dataset.id)
-        } else {
-            getTask(e.target.parentElement.dataset.id)
+        if (!e.target.matches('button')) {
+            if (e.target.dataset.id) {
+                getTask(e.target.dataset.id)
+            } else {
+                getTask(e.target.parentElement.dataset.id)
+            }
         }
     })
 }
@@ -226,7 +228,11 @@ function renderTasks(userId) {
     fetch(`${baseUrl}/users/${userId}`)
     .then(response => response.json())
     .then(user => {
-        user.tasks.forEach(task =>{
+        const tasks = user.tasks
+        tasks.sort(function(a,b){
+            return a.id - b.id
+        })
+        tasks.forEach(task =>{
             renderTask(task)
         })
     })
@@ -267,15 +273,12 @@ function renderTaskDetails(task) {
     detailsPriority.textContent = `Priority: ${task.priority_level}`
     detailsPriority.id = 'task-detail-priority'
 
-    const completionButton = document.createElement('button')
+    const completionButton = document.createElement('p')
     if (task.completion_status) {
-        completionButton.textContent = 'Complete ✅'
+        completionButton.textContent = 'complete'
     } else {
-        completionButton.textContent = 'Incomplete'
+        completionButton.textContent = 'incomplete'
     }
-    completionButton.addEventListener("click", (e) => {
-        taskCompletionToggle(task, task.completion_status)
-    })
 
     const detailsSubtasksUl = document.createElement('ul')
     detailsSubtasksUl.id = 'subtask-list'
@@ -652,8 +655,7 @@ function taskCompletionToggle(task, status) {
     })
     .then(response => response.json())
     .then(task => {
-        console.log(task)    
-        if (taskDetailsDiv.innerHTML != ``) {
+        if(taskDetailsDiv.style.display !== 'none') {
             renderTaskDetails(task)
         }
         tasksContainerUl.innerHTML = ``
