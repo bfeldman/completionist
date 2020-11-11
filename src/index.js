@@ -486,17 +486,21 @@ function toggleSortSubMenu() {
 function sortTasks(criteria) {
     fetch(`${baseUrl}/users/${mainContainer.dataset.id}`)
     .then(resp => resp.json())
-    .then(user => {
-        const sortTasks = user.tasks
-        sortTasks.sort(function(a,b){
-            if (criteria === 'due_date') {
+    .then(user => {        
+        const highTasks = user.tasks.filter(task => task.priority_level === "High")
+        const normalTasks = user.tasks.filter(task => task.priority_level === "Normal")
+        const lowTasks = user.tasks.filter(task => task.priority_level === "Low")
+        
+        const sortedTasks = highTasks.concat(normalTasks, lowTasks)
+        
+        if (criteria === 'due_date') {
+            sortedTasks.sort(function(a,b){
                 return new Date(a.due_date) - new Date(b.due_date)
-            } else if (criteria === 'priority_level') {
-                return b.priority_level - a.priority_level
-            }
-        })
+            })
+        }
+        
         tasksContainerUl.innerHTML = ''
-        sortTasks.forEach(task =>{
+        sortedTasks.forEach(task =>{
             renderTask(task)
         })
     })
@@ -531,13 +535,13 @@ function toggleFilterSubMenu() {
             defaultPriority.setAttribute("value", "default")
             defaultPriority.textContent = "select"
         const highPriority = document.createElement("option")
-            highPriority.setAttribute("value", "2")
+            highPriority.setAttribute("value", "High")
             highPriority.textContent = "High"
         const normalPriority = document.createElement("option")
-            normalPriority.setAttribute("value", "1")
+            normalPriority.setAttribute("value", "Normal")
             normalPriority.textContent = "Normal"
         const lowPriority = document.createElement("option")
-            lowPriority.setAttribute("value", "0")
+            lowPriority.setAttribute("value", "Low")
             lowPriority.textContent = "Low"
         taskPrioritySelectMenu.append(defaultPriority, highPriority, normalPriority, lowPriority)
         filterByPriorityLi.append(taskPrioritySelectMenu)
@@ -551,13 +555,16 @@ function toggleFilterSubMenu() {
         const filterByCompletionLi = document.createElement('li')
         filterByCompletionLi.textContent = 'filter by completion'
         const taskCompletionSelectMenu = document.createElement("select")
+        const defaultCompletion = document.createElement("option")
+            defaultCompletion.setAttribute("value", "default")
+            defaultCompletion.textContent = "select"
         const completeTasks = document.createElement("option")
             completeTasks.setAttribute("value", "true")
             completeTasks.textContent = "Complete"
         const incompleteTasks = document.createElement("option")
             incompleteTasks.setAttribute("value", "false")
             incompleteTasks.textContent = "Incomplete"
-        taskCompletionSelectMenu.append(defaultPriority, completeTasks, incompleteTasks)
+        taskCompletionSelectMenu.append(defaultCompletion, completeTasks, incompleteTasks)
         filterByCompletionLi.append(taskCompletionSelectMenu)
         taskCompletionSelectMenu.addEventListener('change', (e) => {
             if (e.target.value !== "default" ) {
