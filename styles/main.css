@@ -9,11 +9,16 @@ body {
     margin: 0;
 }
 
+header {
+    padding: .30rem 3rem;
+    max-width: 1350px;
+    margin: 0 auto;
+}
 
 main {
     visibility: hidden;
     padding: .30rem 3rem;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
@@ -22,7 +27,6 @@ h1 {
     margin: 30px 100px 0;
     padding-bottom: .3rem;
     padding-left: 20px;
-    max-width: 1000px;
 }
 
 ul#nav-list {
@@ -186,4 +190,22 @@ div#nav-sub-menu > ul > li {
 #sort-sub-list li:hover { 
     background-color: rgb(140, 176, 176); 
     color: whitesmoke;
+}
+
+input:not([type=checkbox]), select {
+    border: 2px solid rgb(169, 156, 139);
+    border-radius: 4px;
+}
+
+input[type=submit]{
+    background-color: rgb(169, 156, 139);
+    border: 2px;
+    color: white;
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+
+#task-form input, #task-form label, #task-form select {
+    margin: .5rem 0;
 }

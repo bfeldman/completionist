@@ -52,9 +52,9 @@ function taskFormRender(task, action) {
         
         const taskFormHeader = document.createElement("h4")
             if (task.title) {
-                taskFormHeader.textContent = "Edit Task"
+                taskFormHeader.textContent = "edit task"
             } else {
-                taskFormHeader.textContent = "Add Task"
+                taskFormHeader.textContent = "add task"
             }
         
         const taskTitleInput = document.createElement("input")
@@ -66,16 +66,16 @@ function taskFormRender(task, action) {
             }
         
         const taskDueDateLabel = document.createElement("label")
-            taskDueDateLabel.textContent = "Due date:"
+            taskDueDateLabel.textContent = "Due date: "
         const taskDueDateSelect = document.createElement("input")
-            taskDueDateSelect.setAttribute("type", "datetime-local")
+            taskDueDateSelect.setAttribute("type", "date")
             taskDueDateSelect.setAttribute("name", "due-date")
             if (task.due_date) {
                 taskDueDateSelect.setAttribute("value", task.due_date.slice(0, -8))
             }
         
         const taskPriorityLabel = document.createElement("label")
-            taskPriorityLabel.textContent = "Priority:"
+            taskPriorityLabel.textContent = "Priority: "
         const taskPrioritySelect = document.createElement("select")
             taskPrioritySelect.setAttribute("name", "priority")
             const highPriority = document.createElement("option")
@@ -93,7 +93,7 @@ function taskFormRender(task, action) {
             }
             
         const taskTagLabel = document.createElement("label")
-            taskTagLabel.textContent="Tag:"
+            taskTagLabel.textContent="Tag: "
         const taskTagInput = document.createElement("input")
             taskTagInput.setAttribute("type", "text")
             taskTagInput.setAttribute("name", "tag")
@@ -102,7 +102,7 @@ function taskFormRender(task, action) {
             }
             
         const taskDescriptionLabel = document.createElement("label")
-            taskDescriptionLabel.textContent="Description:"
+            taskDescriptionLabel.textContent="Description: "
         const taskDescriptionInput = document.createElement("input")
             taskDescriptionInput.setAttribute("type", "text")
             taskDescriptionInput.setAttribute("name", "description")
@@ -113,9 +113,9 @@ function taskFormRender(task, action) {
         const submitTaskButton = document.createElement("input")
             submitTaskButton.setAttribute("type", "submit")
             if (action === "POST") {
-                submitTaskButton.setAttribute("value", "Add New Task")
+                submitTaskButton.setAttribute("value", "add new task")
             } else if (action === "PATCH") {
-                submitTaskButton.setAttribute("value", "Update Task")
+                submitTaskButton.setAttribute("value", "update task")
             }
 
         taskDetailsDiv.innerHTML = ''
