@@ -414,8 +414,13 @@ function addSubtask(task, e) {
 }
 
 function postNewTask(task) {
+    console.log(task)
     fetch(baseUrl+'/tasks', {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
         body: JSON.stringify(task)
     })
     .then(resp => resp.json())
@@ -479,10 +484,11 @@ function toggleSortSubMenu() {
 }
 
 function sortTasks(criteria) {
-    fetch(`${baseUrl}/tasks`)
+    fetch(`${baseUrl}/users/${mainContainer.dataset.id}`)
     .then(resp => resp.json())
-    .then(tasks => {
-        tasks.sort(function(a,b){
+    .then(user => {
+        const sortTasks = user.tasks
+        sortTasks.sort(function(a,b){
             if (criteria === 'due_date') {
                 return new Date(a.due_date) - new Date(b.due_date)
             } else if (criteria === 'priority_level') {
@@ -490,7 +496,7 @@ function sortTasks(criteria) {
             }
         })
         tasksContainerUl.innerHTML = ''
-        tasks.forEach(task =>{
+        sortTasks.forEach(task =>{
             renderTask(task)
         })
     })
@@ -506,37 +512,82 @@ function toggleFilterSubMenu() {
     if (navSubMenuUl.id === 'sort-sub-list' || navSubMenuUl.id === 'nav-sub-menu-ul') {
         navSubMenuUl.id = 'filter-sub-list'
         navSubMenuUl.style.display = 'block'
+        
+        // filter by tag
         const filterByTagLi = document.createElement('li')
         filterByTagLi.textContent = 'filter by tag'
-        filterByTagLi.addEventListener('click', (e) => {
-            filterTasks("tag")
+        const filterByTagInput = document.createElement("input")
+        filterByTagLi.append(filterByTagInput)
+        filterByTagInput.addEventListener("change", (e) => {
+            e.preventDefault()
+            filterTasks("tag", e.target.value)
         })
+        
+        // filter by priority
         const filterByPriorityLi = document.createElement('li')
         filterByPriorityLi.textContent = 'filter by priority'
-        filterByPriorityLi.addEventListener('click', (e) => {
-            filterTasks("priority_level")
+        const taskPrioritySelectMenu = document.createElement("select")
+        const defaultPriority = document.createElement("option")
+            defaultPriority.setAttribute("value", "default")
+            defaultPriority.textContent = "select"
+        const highPriority = document.createElement("option")
+            highPriority.setAttribute("value", "2")
+            highPriority.textContent = "High"
+        const normalPriority = document.createElement("option")
+            normalPriority.setAttribute("value", "1")
+            normalPriority.textContent = "Normal"
+        const lowPriority = document.createElement("option")
+            lowPriority.setAttribute("value", "0")
+            lowPriority.textContent = "Low"
+        taskPrioritySelectMenu.append(defaultPriority, highPriority, normalPriority, lowPriority)
+        filterByPriorityLi.append(taskPrioritySelectMenu)
+        taskPrioritySelectMenu.addEventListener('change', (e) => {
+            if (e.target.value !== "default" ) {
+                filterTasks("priority_level", e.target.value)
+            }
         })
-        navSubMenuUl.append(filterByTagLi,filterByPriorityLi)
+        
+        // filter by completion
+        const filterByCompletionLi = document.createElement('li')
+        filterByCompletionLi.textContent = 'filter by completion'
+        const taskCompletionSelectMenu = document.createElement("select")
+        const completeTasks = document.createElement("option")
+            completeTasks.setAttribute("value", "true")
+            completeTasks.textContent = "Complete"
+        const incompleteTasks = document.createElement("option")
+            incompleteTasks.setAttribute("value", "false")
+            incompleteTasks.textContent = "Incomplete"
+        taskCompletionSelectMenu.append(defaultPriority, completeTasks, incompleteTasks)
+        filterByCompletionLi.append(taskCompletionSelectMenu)
+        taskCompletionSelectMenu.addEventListener('change', (e) => {
+            if (e.target.value !== "default" ) {
+                if (e.target.value === "true") {
+                    filterTasks("completion_status", true)
+                } else if (e.target.value === "false") {
+                    filterTasks("completion_status", false)
+                }
+            }
+        })
+            
+            
+        
+        navSubMenuUl.append(filterByTagLi,filterByPriorityLi, filterByCompletionLi)
     } else {
         navSubMenuUl.id = 'nav-sub-menu-ul'
         navSubMenuUl.style.display = 'none'
     }
 }
 
-function filterTasks(criteria) {
-    fetch(`${baseUrl}/tasks`)
+function filterTasks(attribute, value) {
+    fetch(`${baseUrl}/users/${mainContainer.dataset.id}`)
     .then(resp => resp.json())
-    .then(tasks => {
-        tasks
-
-        })
+    .then(user => {
+        const tasks = user.tasks
+        let filteredTasks = tasks.filter(task => task[attribute] === value)
+        console.log(filteredTasks)
         tasksContainerUl.innerHTML = ''
-        tasks.forEach(task =>{
+        filteredTasks.forEach(task =>{
             renderTask(task)
         })
     })
-}
-
-function hasTag(value) {
-    return task.tag === value 
 }
