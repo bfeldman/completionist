@@ -28,7 +28,7 @@ loginForm.addEventListener("submit", (e) => {
         if (user) {
             mainElement.style.visibility = "visible"
             mainContainer.dataset.id = user.id
-            loginForm.remove()
+            loginForm.parentElement.remove()
             renderTasks(user.id)
         }   
     })    
@@ -598,3 +598,8 @@ function filterTasks(attribute, value) {
         })
     })
 }
+
+const logoutButton = document.querySelector("#logout")
+logoutButton.addEventListener("click", (e) => {
+    location.reload();
+})

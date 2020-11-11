@@ -117,7 +117,7 @@ ul#nav-list li:hover {
     background-color: rgb(252, 246, 236);
 }
 
-#login {
+#login-container {
     display: flex;
     margin: 20px 30px 20px 30px;
     padding: 20px 30px 20px 30px;
@@ -133,10 +133,6 @@ ul#nav-list li:hover {
 #delete-indv-subtask-button {
     display: none;
 }
-
-/* #new-task-form * {
-    margin: 10px;
-} */
 
 #close-form {
     
