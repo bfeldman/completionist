@@ -28,7 +28,7 @@ loginForm.addEventListener("submit", (e) => {
         if (user) {
             mainElement.style.visibility = "visible"
             mainContainer.dataset.id = user.id
-            loginForm.parentElement.remove()
+            loginForm.parentElement.parentElement.remove()
             renderTasks(user.id)
         }   
     })    
@@ -48,7 +48,7 @@ function taskFormRender(task, action) {
         const closeFormButton = document.createElement("button")
             closeFormButton.id = "close-form"
             closeFormButton.setAttribute("type", "button")
-            closeFormButton.textContent = "❌ Close Form"
+            closeFormButton.textContent = "cancel"
         
         const taskFormHeader = document.createElement("h4")
             if (task.title) {
@@ -238,8 +238,9 @@ function renderTaskDetails(task) {
     taskDetailsContainerDiv.id = 'task-details-container'
 
     const taskVisibilityButton = document.createElement('button')
+    taskVisibilityButton.id = 'task-visibility-button'
     taskVisibilityButton.addEventListener('click', toggleTaskDetailsVisibility)
-    taskVisibilityButton.textContent = '❌ Close Task Details'
+    taskVisibilityButton.textContent = 'close details'
 
     const detailsTitle = document.createElement('h3')
     detailsTitle.textContent = task.title
@@ -277,7 +278,7 @@ function renderTaskDetails(task) {
 
     const detailsSubtaskAddButton = document.createElement('button')
     detailsSubtaskAddButton.id = 'subtask-add-button'
-    detailsSubtaskAddButton.textContent = "Add Subtask"
+    detailsSubtaskAddButton.textContent = "add subtask"
     detailsSubtaskAddButton.addEventListener('click', showAddSubtask)
 
     const addSubtaskForm = document.createElement("form")
@@ -298,6 +299,7 @@ function renderTaskDetails(task) {
         const subtaskCheckbox = document.createElement('input')
         subtaskCheckbox.dataset.id = subtask.id
         subtaskCheckbox.type = 'checkbox'
+        subtaskCheckbox.className = 'subtask-checkbox'
         if (subtask.completion_status) {
             subtaskCheckbox.checked = true
         }
@@ -324,10 +326,11 @@ function renderTaskDetails(task) {
     })
 
     const deleteButton = document.createElement('button')
-    deleteButton.textContent = 'Delete Task'
+    deleteButton.id = 'delete-task-button'
+    deleteButton.textContent = 'delete task'
     
     const editButton = document.createElement('button')
-    editButton.textContent = 'Edit Task'
+    editButton.textContent = 'edit task'
     editButton.addEventListener("click", () => {
         taskFormRender(task, "PATCH")
     })
@@ -519,7 +522,7 @@ function toggleFilterSubMenu() {
         
         // filter by tag
         const filterByTagLi = document.createElement('li')
-        filterByTagLi.textContent = 'filter by tag'
+        filterByTagLi.textContent = 'filter by tag '
         const filterByTagInput = document.createElement("input")
         filterByTagLi.append(filterByTagInput)
         filterByTagInput.addEventListener("change", (e) => {
@@ -529,7 +532,7 @@ function toggleFilterSubMenu() {
         
         // filter by priority
         const filterByPriorityLi = document.createElement('li')
-        filterByPriorityLi.textContent = 'filter by priority'
+        filterByPriorityLi.textContent = 'filter by priority '
         const taskPrioritySelectMenu = document.createElement("select")
         const defaultPriority = document.createElement("option")
             defaultPriority.setAttribute("value", "default")
@@ -553,7 +556,7 @@ function toggleFilterSubMenu() {
         
         // filter by completion
         const filterByCompletionLi = document.createElement('li')
-        filterByCompletionLi.textContent = 'filter by completion'
+        filterByCompletionLi.textContent = 'filter by completion '
         const taskCompletionSelectMenu = document.createElement("select")
         const defaultCompletion = document.createElement("option")
             defaultCompletion.setAttribute("value", "default")

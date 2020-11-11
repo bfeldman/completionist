@@ -9,6 +9,7 @@ body {
     margin: 0;
 }
 
+
 main {
     visibility: hidden;
     padding: .30rem 3rem;
@@ -18,9 +19,10 @@ main {
 
 h1 {
     border-bottom: 4px solid black;
-    margin: 30px 50px 0;
+    margin: 30px 100px 0;
     padding-bottom: .3rem;
     padding-left: 20px;
+    max-width: 1000px;
 }
 
 ul#nav-list {
@@ -50,6 +52,7 @@ ul#nav-list li:hover {
 
 #tasks-container {
     padding: 0 1rem 0 0;
+    flex-grow: 1;
 }
 
 #tasks-container > ul {
@@ -118,9 +121,9 @@ ul#nav-list li:hover {
 }
 
 #login-container {
-    display: flex;
-    margin: 20px 30px 20px 30px;
-    padding: 20px 30px 20px 30px;
+    margin: 40px 130px 0px;
+    max-width: 100;
+    padding: 0px 30px 20px 30px;
     border-style: solid;
     border-width: 1px;
     background-color: rgb(252, 239, 220);
@@ -144,4 +147,43 @@ ul#nav-list li:hover {
 
 #sort-sub-menu, #filter-sub-menu, #nav-sub-menu-ul{
     display: none;
+}
+
+button {
+    background-color: rgb(169, 156, 139);
+    border: 2px;
+    color: white;
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+.delete-indv-subtask-button {
+    background-color: rgb(215, 120, 109);
+    font-size: small;
+    padding: 2px 4px;
+}
+
+#delete-task-button {
+    background-color: rgb(215, 120, 109);
+}
+
+#task-visibility-button, #close-form {
+    float: right;
+}
+
+div#nav-sub-menu > ul {
+    margin: 0;
+    padding: .3rem 0 1rem;
+}
+
+div#nav-sub-menu > ul > li {
+    display: inline-block;
+    font-size: .9 rem;
+    margin-right: 2.2rem;
+    padding: .1rem .5rem;
+}
+
+#sort-sub-list li:hover { 
+    background-color: rgb(140, 176, 176); 
+    color: whitesmoke;
 }
