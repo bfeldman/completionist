@@ -12,6 +12,7 @@ const tasksContainerDiv = document.querySelector("#tasks-container")
 const tasksContainerUl = tasksContainerDiv.querySelector("ul")
 const taskDetailsDiv = document.querySelector("#task-details")
 const taskSortButton = document.querySelector("#sort-button")
+const taskFilterButton = document.querySelector("#filter-button")
 
 /* FUNCTIONS */ 
 
@@ -457,8 +458,9 @@ function toggleSortSubMenu() {
     const navSubMenu = document.querySelector("#nav-sub-menu")
     const navSubMenuUl = navSubMenu.querySelector("ul")
     navSubMenuUl.innerHTML = ''
-    if (navSubMenu.style.display === 'none') {
-        navSubMenu.style.display = 'block'
+    if (navSubMenuUl.id === 'filter-sub-list' || navSubMenuUl.id === 'nav-sub-menu-ul') {
+        navSubMenuUl.id = 'sort-sub-list'
+        navSubMenuUl.style.display = 'block'
         const sortByDateLi = document.createElement('li')
         sortByDateLi.textContent = 'sort by date'
         sortByDateLi.addEventListener('click', (e) => {
@@ -470,13 +472,57 @@ function toggleSortSubMenu() {
             sortTasks("priority_level")
         })
         navSubMenuUl.append(sortByDateLi,sortByPriorityLi)
-
     } else {
-        navSubMenu.style.display = 'none'
+        navSubMenuUl.id = 'nav-sub-menu-ul'
+        navSubMenuUl.style.display = 'none'
     }
 }
 
-// sort tasks
+function sortTasks(criteria) {
+    fetch(`${baseUrl}/tasks`)
+    .then(resp => resp.json())
+    .then(tasks => {
+        tasks.sort(function(a,b){
+            if (criteria === 'due_date') {
+                return new Date(a.due_date) - new Date(b.due_date)
+            } else if (criteria === 'priority_level') {
+                return b.priority_level - a.priority_level
+            }
+        })
+        tasksContainerUl.innerHTML = ''
+        tasks.forEach(task =>{
+            renderTask(task)
+        })
+    })
+}
+
+//filter event listener
+taskFilterButton.addEventListener('click', toggleFilterSubMenu)
+
+function toggleFilterSubMenu() {
+    const navSubMenu = document.querySelector("#nav-sub-menu")
+    const navSubMenuUl = navSubMenu.querySelector("ul")
+    navSubMenuUl.innerHTML = ''
+    if (navSubMenuUl.id === 'sort-sub-list' || navSubMenuUl.id === 'nav-sub-menu-ul') {
+        navSubMenuUl.id = 'filter-sub-list'
+        navSubMenuUl.style.display = 'block'
+        const filterByTagLi = document.createElement('li')
+        filterByTagLi.textContent = 'filter by tag'
+        filterByTagLi.addEventListener('click', (e) => {
+            filterTasks("tag")
+        })
+        const filterByPriorityLi = document.createElement('li')
+        filterByPriorityLi.textContent = 'filter by priority'
+        filterByPriorityLi.addEventListener('click', (e) => {
+            filterTasks("priority_level")
+        })
+        navSubMenuUl.append(filterByTagLi,filterByPriorityLi)
+    } else {
+        navSubMenuUl.id = 'nav-sub-menu-ul'
+        navSubMenuUl.style.display = 'none'
+    }
+}
+
 function sortTasks(criteria) {
     fetch(`${baseUrl}/tasks`)
     .then(resp => resp.json())

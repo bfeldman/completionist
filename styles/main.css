@@ -146,6 +146,6 @@ ul#nav-list li:hover {
     display: none;
 }
 
-#nav-sub-menu {
+#sort-sub-menu, #filter-sub-menu, #nav-sub-menu-ul{
     display: none;
 }
