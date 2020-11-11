@@ -523,20 +523,20 @@ function toggleFilterSubMenu() {
     }
 }
 
-function sortTasks(criteria) {
+function filterTasks(criteria) {
     fetch(`${baseUrl}/tasks`)
     .then(resp => resp.json())
     .then(tasks => {
-        tasks.sort(function(a,b){
-            if (criteria === 'due_date') {
-                return new Date(a.due_date) - new Date(b.due_date)
-            } else if (criteria === 'priority_level') {
-                return b.priority_level - a.priority_level
-            }
+        tasks
+
         })
         tasksContainerUl.innerHTML = ''
         tasks.forEach(task =>{
             renderTask(task)
         })
     })
+}
+
+function hasTag(value) {
+    return task.tag === value 
 }
