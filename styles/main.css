@@ -130,6 +130,10 @@ ul#nav-list li:hover {
     list-style-type: none;
 } 
 
+#delete-indv-subtask-button {
+    display: none;
+}
+
 /* #new-task-form * {
     margin: 10px;
 } */
@@ -139,5 +143,9 @@ ul#nav-list li:hover {
 }
 
 #subtask-add-form {
+    display: none;
+}
+
+#nav-sub-menu {
     display: none;
 }

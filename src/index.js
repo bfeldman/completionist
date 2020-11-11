@@ -11,6 +11,7 @@ const newTaskButton = document.querySelector("#new-task-button")
 const tasksContainerDiv = document.querySelector("#tasks-container")
 const tasksContainerUl = tasksContainerDiv.querySelector("ul")
 const taskDetailsDiv = document.querySelector("#task-details")
+const taskSortButton = document.querySelector("#sort-button")
 
 /* FUNCTIONS */ 
 
@@ -447,4 +448,49 @@ function updateCard(task) {
     const [year, month, day] = task.due_date.split('T').slice(0,1).join('-').split('-')
     taskCard[1].textContent = `Due: ${month}/${day}/${year}`
     taskCard[2].textContent = `Priority: ${task.priority_level}`
+}
+
+//sort event listener
+taskSortButton.addEventListener('click', toggleSortSubMenu)
+
+function toggleSortSubMenu() {
+    const navSubMenu = document.querySelector("#nav-sub-menu")
+    const navSubMenuUl = navSubMenu.querySelector("ul")
+    navSubMenuUl.innerHTML = ''
+    if (navSubMenu.style.display === 'none') {
+        navSubMenu.style.display = 'block'
+        const sortByDateLi = document.createElement('li')
+        sortByDateLi.textContent = 'sort by date'
+        sortByDateLi.addEventListener('click', (e) => {
+            sortTasks("due_date")
+        })
+        const sortByPriorityLi = document.createElement('li')
+        sortByPriorityLi.textContent = 'sort by priority'
+        sortByPriorityLi.addEventListener('click', (e) => {
+            sortTasks("priority_level")
+        })
+        navSubMenuUl.append(sortByDateLi,sortByPriorityLi)
+
+    } else {
+        navSubMenu.style.display = 'none'
+    }
+}
+
+// sort tasks
+function sortTasks(criteria) {
+    fetch(`${baseUrl}/tasks`)
+    .then(resp => resp.json())
+    .then(tasks => {
+        tasks.sort(function(a,b){
+            if (criteria === 'due_date') {
+                return new Date(a.due_date) - new Date(b.due_date)
+            } else if (criteria === 'priority_level') {
+                return b.priority_level - a.priority_level
+            }
+        })
+        tasksContainerUl.innerHTML = ''
+        tasks.forEach(task =>{
+            renderTask(task)
+        })
+    })
 }
