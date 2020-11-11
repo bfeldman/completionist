@@ -169,6 +169,7 @@ button {
 
 #delete-task-button {
     background-color: rgb(215, 120, 109);
+    margin-right: 15px;
 }
 
 #task-visibility-button, #close-form {
