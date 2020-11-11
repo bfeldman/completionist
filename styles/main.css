@@ -44,6 +44,7 @@ ul#nav-list > li {
 ul#nav-list li:hover { 
     background-color: rgb(140, 176, 176); 
     color: whitesmoke;
+    cursor: default;
 }
 
 #main-container {
@@ -191,6 +192,7 @@ div#nav-sub-menu > ul > li {
 #sort-sub-list li:hover { 
     background-color: rgb(140, 176, 176); 
     color: whitesmoke;
+    cursor: default;
 }
 
 input:not([type=checkbox]), select {
