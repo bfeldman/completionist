@@ -202,6 +202,9 @@ function renderTask(task) {
     } else {
         completionButton.textContent = 'incomplete'
     }
+    completionButton.addEventListener("click", (e) => {
+        taskCompletionToggle(task, task.completion_status)
+    })
 
     taskCardDiv.append(taskTitle, taskDueDate, taskPriority, completionButton)
 
@@ -265,10 +268,13 @@ function renderTaskDetails(task) {
 
     const completionButton = document.createElement('button')
     if (task.completion_status) {
-        completionButton.textContent = 'complete'
+        completionButton.textContent = 'Complete ✅'
     } else {
-        completionButton.textContent = 'incomplete'
+        completionButton.textContent = 'Incomplete'
     }
+    completionButton.addEventListener("click", (e) => {
+        taskCompletionToggle(task, task.completion_status)
+    })
 
     const detailsSubtasksUl = document.createElement('ul')
     detailsSubtasksUl.id = 'subtask-list'
@@ -620,5 +626,34 @@ function deleteTask(id) {
         taskDetailsDiv.style.display = 'none'
         tasksContainerUl.innerHTML = ''
         renderTasks(mainContainer.dataset.id)
+    })
+}
+
+function taskCompletionToggle(task, status) {
+    const newStatus = !status
+    fetch(`${baseUrl}/tasks/${task.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            title: task.title,
+            priority_level: task.priority_level,
+            due_date: task.due_date,
+            tag: task.tag,
+            description: task.description,
+            completion_status: newStatus,
+            user_id: task.user_id
+        })
+    })
+    .then(response => response.json())
+    .then(task => {
+        console.log(task)    
+        if (taskDetailsDiv.innerHTML != ``) {
+            renderTaskDetails(task)
+        }
+        tasksContainerUl.innerHTML = ``
+        renderTasks(task.user_id)
     })
 }
