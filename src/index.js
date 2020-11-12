@@ -592,10 +592,17 @@ function toggleFilterSubMenu() {
                 }
             }
         })
+
+        const clearFilterButton = document.createElement('button')
+        clearFilterButton.textContent = 'clear filter'
+        clearFilterButton.addEventListener('click', (e) => {
+            tasksContainerUl.innerHTML = ''
+            renderTasks(mainContainer.dataset.id)
+        })
             
             
         
-        navSubMenuUl.append(filterByTagLi,filterByPriorityLi, filterByCompletionLi)
+        navSubMenuUl.append(filterByTagLi,filterByPriorityLi, filterByCompletionLi, clearFilterButton)
     } else {
         navSubMenuUl.id = 'nav-sub-menu-ul'
         navSubMenuUl.style.display = 'none'
