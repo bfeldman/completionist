@@ -3,6 +3,8 @@ const baseUrl = "http://localhost:3000/api/v1"
 /* HTML ELEMENTS */
 // login form
 const loginForm = document.querySelector("#login")
+const signupForm = document.querySelector("#signup")
+const loginContainer = document.querySelector('#login-container')
 
 // main interface
 const mainElement = document.querySelector("main")
@@ -28,12 +30,44 @@ loginForm.addEventListener("submit", (e) => {
         if (user) {
             mainElement.style.visibility = "visible"
             mainContainer.dataset.id = user.id
-            loginForm.parentElement.parentElement.remove()
+            loginContainer.remove()
             renderTasks(user.id)
         }   
     })    
 })
 
+signupForm.addEventListener('submit', (e) => {
+    // const submittedUsername = signupForm.firstElementChild.value
+    e.preventDefault()
+    console.log(e.target)
+    const userName = signupForm.querySelector("input[name='username']").value
+    const firstName = signupForm.querySelector("input[name='first_name']").value
+    const lastName = signupForm.querySelector("input[name='last_name']").value
+
+    const newUser = {
+        username: userName,
+        first_name: firstName,
+        last_name: lastName 
+    }
+
+    fetch(`${baseUrl}/users`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(newUser)
+    })
+    .then(resp => resp.json())
+    .then(newUser => {
+        loginContainer.remove()
+        mainElement.style.visibility = "visible"
+        mainContainer.dataset.id = newUser.id
+        renderTasks(newUser.id)
+        taskFormRender({}, "POST")
+    })
+
+})
 
 // task form render
 newTaskButton.addEventListener("click", () => {
@@ -58,6 +92,7 @@ function taskFormRender(task, action) {
             }
         
         const taskTitleInput = document.createElement("input")
+            taskTitleInput.required = true
             taskTitleInput.setAttribute("type", "text")
             taskTitleInput.setAttribute("name", "title")
             taskTitleInput.setAttribute("placeholder", "task title")
@@ -68,6 +103,7 @@ function taskFormRender(task, action) {
         const taskDueDateLabel = document.createElement("label")
             taskDueDateLabel.textContent = "Due date: "
         const taskDueDateSelect = document.createElement("input")
+            taskDueDateSelect.required = true
             taskDueDateSelect.setAttribute("type", "date")
             taskDueDateSelect.setAttribute("name", "due-date")
             if (task.due_date) {
@@ -77,6 +113,7 @@ function taskFormRender(task, action) {
         const taskPriorityLabel = document.createElement("label")
             taskPriorityLabel.textContent = "Priority: "
         const taskPrioritySelect = document.createElement("select")
+            taskPrioritySelect.required = true
             taskPrioritySelect.setAttribute("name", "priority")
             const highPriority = document.createElement("option")
                 highPriority.setAttribute("value", "High")
@@ -95,6 +132,7 @@ function taskFormRender(task, action) {
         const taskTagLabel = document.createElement("label")
             taskTagLabel.textContent="Tag: "
         const taskTagInput = document.createElement("input")
+            taskTagInput.required = true
             taskTagInput.setAttribute("type", "text")
             taskTagInput.setAttribute("name", "tag")
             if (task.tag) {
@@ -104,6 +142,7 @@ function taskFormRender(task, action) {
         const taskDescriptionLabel = document.createElement("label")
             taskDescriptionLabel.textContent="Description: "
         const taskDescriptionInput = document.createElement("input")
+            taskDescriptionInput.required = true
             taskDescriptionInput.setAttribute("type", "text")
             taskDescriptionInput.setAttribute("name", "description")
             if (task.description) {
@@ -295,6 +334,7 @@ function renderTaskDetails(task) {
     addSubtaskForm.id = 'subtask-add-form'
 
     const subtaskTitleInput = document.createElement("input")
+    subtaskTitleInput.required = true
     subtaskTitleInput.setAttribute("type", "text")
     subtaskTitleInput.setAttribute("name", "title")
 

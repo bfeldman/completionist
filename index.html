@@ -9,16 +9,26 @@
 </head>
 <body>
     <header>
-    <h1>completionist</h1>
+        <h1>completionist</h1>
         <div id=login-container>
             <h3 id='login-header'>enter username:</h3>
             <div>
                 <form id="login">
-                    <input type="text" name="username" placeholder="username" />
+                    <input type="text" name="username" placeholder="username" required/>
+                    <input type="submit" name="submit" value="login"/>
+                </form>
+            </div>
+            <h3 id='signup-header'>create account:</h3>
+            <div>
+                <form id="signup">
+                    <input type="text" name="username" placeholder="username" required/>
+                    <input type="text" name="first_name" placeholder="first name" required/>
+                    <input type="text" name="last_name" placeholder="last name" required/>
+                    <input type="submit" name="submit" value="create account"/>
                 </form>
             </div>
         </div>
-    <header>
+    </header>
     <main>
         <div id="nav">
             <ul id="nav-list">
