@@ -735,6 +735,7 @@ function reminderAlert(userId) {
                     reminderLi.textContent = task.title
                 
                 remindersUl.append(reminderLi)
+                remindersDiv.style.display = 'block'
             }
         })
         if (remindersUl.innerHTML === ``) {
