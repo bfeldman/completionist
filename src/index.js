@@ -15,6 +15,9 @@ const tasksContainerUl = tasksContainerDiv.querySelector("ul")
 const taskDetailsDiv = document.querySelector("#task-details")
 const taskSortButton = document.querySelector("#sort-button")
 const taskFilterButton = document.querySelector("#filter-button")
+const remindersDiv = document.querySelector("#reminders")
+const remindersUl = remindersDiv.querySelector("ul")
+const clearReminderButton = document.querySelector("#clear-reminders")
 
 /* FUNCTIONS */ 
 
@@ -32,6 +35,7 @@ loginForm.addEventListener("submit", (e) => {
             mainContainer.dataset.id = user.id
             loginContainer.remove()
             renderTasks(user.id)
+            reminderAlert(user.id)
         }   
     })    
 })
@@ -219,6 +223,7 @@ function taskFormRender(task, action) {
 
 // render single tasks
 function renderTask(task) {
+    
     const taskCardLi = document.createElement('li')
 
     const taskCardDiv = document.createElement('div')
@@ -709,3 +714,35 @@ function taskCompletionToggle(task, status) {
         renderTasks(task.user_id)
     })
 }
+
+// reminder functionality
+function isUpcomingTask(taskDate) {
+    const threeDays = 259200000
+    if (new Date(taskDate) - Date.now() < threeDays) {
+        return true
+    }
+}
+
+function reminderAlert(userId) {
+    fetch(`${baseUrl}/users/${userId}`)
+    .then(response => response.json())
+    .then(user => {
+        const tasks = user.tasks
+        remindersUl.innerHTML = ``
+        tasks.forEach(task => {
+            if (isUpcomingTask(task.due_date) && task.completion_status === false) {
+                const reminderLi = document.createElement("li")
+                    reminderLi.textContent = task.title
+                
+                remindersUl.append(reminderLi)
+            }
+        })
+        if (remindersUl.innerHTML === ``) {
+            remindersDiv.remove()
+        }
+    })
+}
+
+clearReminderButton.addEventListener("click", (e) => {
+    remindersDiv.remove()
+})

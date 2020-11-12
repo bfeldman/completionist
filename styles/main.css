@@ -212,3 +212,18 @@ input[type=submit]{
 #task-form input, #task-form label, #task-form select {
     margin: .5rem 0;
 }
+
+#clear-reminders {
+    float: right;
+    border: 2px;
+    color: black;
+    background-color: rgb(252, 246, 236);
+}
+
+#reminders {
+    border-style: solid;
+    border-width: 1px;
+    padding: 20px;
+    background-color: rgb(215, 120, 109);
+    height: 100%;
+}
